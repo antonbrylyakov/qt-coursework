@@ -15,7 +15,7 @@ MainWindow::MainWindow(QWidget *parent)
     // ФТ2
     auto databaseConfig = DatabaseConfiguration
     {
-        "981757-ca08998.tmweb.ru", 5432, "demo", "netology_user_cpp", "CppNeto3"
+        "981757-ca08998.tmweb.ru", 5432, "demo", "netology_usr_cpp", "CppNeto3"
     };
 
     m_connection = new DatabaseConnection(databaseConfig, this);
