@@ -42,16 +42,20 @@ void DatabaseConnection::close()
     setStatus(DatabaseConnectionStatus::Disconnected);
 }
 
-QSqlQueryModel *DatabaseConnection::executeQuery(QString query)
+bool DatabaseConnection::executeQuery(QString query, QSqlQueryModel *toModel)
 {
-    auto model = new QSqlQueryModel();
-    model->setQuery(query, m_database);
-    if (model->lastError().type() != QSqlError::NoError && m_configuration.disconnectOnError)
+    toModel->setQuery(query, m_database);
+    if (toModel->lastError().type() != QSqlError::NoError)
     {
-        close();
+        if (m_configuration.disconnectOnError)
+        {
+            close();
+        }
+
+        return false;
     }
 
-    return model;
+    return true;
 }
 
 void DatabaseConnection::doOpen(bool untilSuccess)

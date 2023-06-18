@@ -21,6 +21,8 @@ set(PROJECT_SOURCES
         databaseconnection.cpp
         databaseconfiguration.h
         databaseconnectionstatus.h
+        dataaccessorbase.h
+        dataaccessorbase.cpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

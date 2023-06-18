@@ -18,7 +18,7 @@ public:
     void setConfiguration(DatabaseConfiguration config);
     void open(bool untilSuccess = false);
     void close();
-    QSqlQueryModel* executeQuery(QString query);
+    bool executeQuery(QString query, QSqlQueryModel* toModel);
 signals:
     void sig_ChangeConnectionStatus(DatabaseConnectionStatus status);
     void sig_ConnectionError(QString msg);
