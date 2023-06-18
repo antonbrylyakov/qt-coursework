@@ -25,6 +25,8 @@ set(PROJECT_SOURCES
         dataaccessorbase.cpp
         airportdataaccessor.h
         airportdataaccessor.cpp
+        flightdataaccessor.h
+        flightdataaccessor.cpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

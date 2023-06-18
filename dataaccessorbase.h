@@ -2,6 +2,7 @@
 #define DATAACCESSORBASE_H
 
 #include <QObject>
+#include <QSqlQuery>
 #include "databaseconnection.h"
 
 // Базовый класс для доступа к данным
@@ -14,8 +15,8 @@ public:
     virtual void getData(QSqlQueryModel* model);
 protected:
     DatabaseConnection* m_connection = nullptr;
-    virtual QString buildSql() = 0;
-    virtual void initHeaders(QSqlQueryModel* model) = 0;
+    virtual void buildSql(QSqlQuery& query) const = 0;
+    virtual void initHeaders(QSqlQueryModel* model) const = 0;
 
 signals:
     void sig_DataReady(QSqlQueryModel* model);

@@ -9,8 +9,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-    // ФТ4
-    disableFilter();
+    initInterface();
 
     m_msg = new QMessageBox(this);
 
@@ -23,6 +22,8 @@ MainWindow::MainWindow(QWidget *parent)
     m_connection = new DatabaseConnection(databaseConfig, this);
     m_airportAccessor = new AirportDataAccessor(m_connection, this);
     m_airportsModel = new QSqlQueryModel(this);
+    m_flightDataAccessor = new FlightDataAccessor(m_connection, this);
+    m_flightsModel = new QSqlQueryModel(this);
 
     displayStatus(STATUS_DISCONNECTED);
     connect(m_connection, &DatabaseConnection::sig_ChangeConnectionStatus, [this](auto status)
@@ -69,6 +70,16 @@ void MainWindow::showEvent(QShowEvent *event)
 void MainWindow::closeEvent(QCloseEvent *event)
 {
     disconnectFromDatabase();
+}
+
+void MainWindow::initInterface()
+{
+    // ФТ4
+    disableFilter();
+    ui->rb_departure->setChecked(true);
+    // О2
+    ui->de_flightDate->setMinimumDate(MIN_DATE);
+    ui->de_flightDate->setMaximumDate(MAX_DATE);
 }
 
 void MainWindow::displayStatus(QString str)

@@ -8,8 +8,8 @@ class AirportDataAccessor : public DataAccessorBase
 public:
     AirportDataAccessor(DatabaseConnection* connection, QObject *parent = nullptr);
 protected:
-    QString buildSql() override;
-    void initHeaders(QSqlQueryModel* model) override;
+    void buildSql(QSqlQuery& query) const override;
+    void initHeaders(QSqlQueryModel* model) const override;
 };
 
 #endif // AIRPORTDATAACCESSOR_H

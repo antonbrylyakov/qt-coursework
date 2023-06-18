@@ -5,6 +5,7 @@
 #include <QTimer>
 #include <QSqlQueryModel>
 #include <QSqlDatabase>
+#include <QSqlQuery>
 #include "databaseconnectionstatus.h"
 #include "databaseconfiguration.h"
 
@@ -18,7 +19,8 @@ public:
     void setConfiguration(DatabaseConfiguration config);
     void open(bool untilSuccess = false);
     void close();
-    bool executeQuery(QString query, QSqlQueryModel* toModel);
+    QSqlQuery createQuery() const;
+    bool executeQuery(QSqlQuery&& query, QSqlQueryModel* toModel);
 signals:
     void sig_ChangeConnectionStatus(DatabaseConnectionStatus status);
     void sig_ConnectionError(QString msg);

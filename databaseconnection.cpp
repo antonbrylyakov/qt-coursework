@@ -42,9 +42,14 @@ void DatabaseConnection::close()
     setStatus(DatabaseConnectionStatus::Disconnected);
 }
 
-bool DatabaseConnection::executeQuery(QString query, QSqlQueryModel *toModel)
+QSqlQuery DatabaseConnection::createQuery() const
 {
-    toModel->setQuery(query, m_database);
+    return QSqlQuery(m_database);
+}
+
+bool DatabaseConnection::executeQuery(QSqlQuery &&query, QSqlQueryModel *toModel)
+{
+    toModel->setQuery(std::move(query));
     if (toModel->lastError().type() != QSqlError::NoError)
     {
         if (m_configuration.disconnectOnError)

@@ -10,8 +10,10 @@ DataAccessorBase::DataAccessorBase(DatabaseConnection* connection, QObject *pare
 
 void DataAccessorBase::getData(QSqlQueryModel* model)
 {
-    const auto sql = buildSql();
-    if (m_connection->executeQuery(sql, model))
+    auto query = m_connection->createQuery();
+    buildSql(query);
+    query.exec();
+    if (m_connection->executeQuery(std::move(query), model))
     {
         initHeaders(model);
     }

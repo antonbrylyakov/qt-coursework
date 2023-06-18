@@ -1,10 +1,12 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include <QDate>
 #include <QMainWindow>
 #include <QMessageBox>
 #include "airportdataaccessor.h"
 #include "databaseconnection.h"
+#include "flightdataaccessor.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -31,8 +33,11 @@ private:
     DatabaseConnection* m_connection;
     AirportDataAccessor* m_airportAccessor;
     QSqlQueryModel* m_airportsModel;
+    FlightDataAccessor* m_flightDataAccessor;
+    QSqlQueryModel* m_flightsModel;
     QMessageBox* m_msg;
     bool m_airportsLoaded = false;
+    void initInterface();
     void displayStatus(QString str);
     void connectToDatabase();
     void disconnectFromDatabase();
@@ -44,6 +49,8 @@ private:
 
     inline static QString STATUS_CONNECTED = "Подключено";
     inline static QString STATUS_DISCONNECTED = "Отключено";
+    inline static QDate MIN_DATE = QDate(2016, 8, 15);
+    inline static QDate MAX_DATE = QDate(2017, 9, 14);
 };
 
 #endif // MAINWINDOW_H
