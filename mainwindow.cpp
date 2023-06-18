@@ -1,6 +1,8 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
 
+#include <QSqlRecord>
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -19,6 +21,8 @@ MainWindow::MainWindow(QWidget *parent)
     };
 
     m_connection = new DatabaseConnection(databaseConfig, this);
+    m_airportAccessor = new AirportDataAccessor(m_connection, this);
+    m_airportsModel = new QSqlQueryModel(this);
 
     displayStatus(STATUS_DISCONNECTED);
     connect(m_connection, &DatabaseConnection::sig_ChangeConnectionStatus, [this](auto status)
@@ -26,6 +30,10 @@ MainWindow::MainWindow(QWidget *parent)
         if (status == DatabaseConnectionStatus::Connected)
         {
             displayStatus(STATUS_CONNECTED);
+            if (!m_airportsLoaded)
+            {
+                loadAirports();
+            }
         }
         else
         {
@@ -34,6 +42,10 @@ MainWindow::MainWindow(QWidget *parent)
     });
 
     connect(m_connection, &DatabaseConnection::sig_ConnectionError, this, &MainWindow::displayError);
+
+    connect(m_airportAccessor, &AirportDataAccessor::sig_DataReady, this, &MainWindow::displayAirports);
+
+    connect(m_airportAccessor, &AirportDataAccessor::sig_QueryError, this, &MainWindow::displayError);
 }
 
 MainWindow::~MainWindow()
@@ -93,5 +105,28 @@ void MainWindow::disableFilter()
 void MainWindow::enableFilter()
 {
     ui->gb_filter->setEnabled(true);
+}
+
+void MainWindow::loadAirports()
+{
+    m_airportAccessor->getData(m_airportsModel);
+}
+
+void MainWindow::displayAirports()
+{
+    m_airportsLoaded = true;
+    auto cb = ui->cbx_airport;
+    cb->clear();
+    for (auto i = 0; i < m_airportsModel->rowCount(); ++i)
+    {
+        auto record = m_airportsModel->record(i);
+        auto name = record.value(0).toString();
+        auto code = record.value(1);
+        auto text = QString("%1 (%2)").arg(name).arg(code.toString());
+        cb->addItem(text, code);
+    }
+
+    m_airportsModel->clear();
+    enableFilter();
 }
 

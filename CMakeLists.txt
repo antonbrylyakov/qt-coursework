@@ -23,6 +23,8 @@ set(PROJECT_SOURCES
         databaseconnectionstatus.h
         dataaccessorbase.h
         dataaccessorbase.cpp
+        airportdataaccessor.h
+        airportdataaccessor.cpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

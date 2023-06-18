@@ -8,14 +8,22 @@ DataAccessorBase::DataAccessorBase(DatabaseConnection* connection, QObject *pare
     m_connection = connection;
 }
 
-bool DataAccessorBase::getData(QSqlQueryModel* model)
+void DataAccessorBase::getData(QSqlQueryModel* model)
 {
     const auto sql = buildSql();
     if (m_connection->executeQuery(sql, model))
     {
         initHeaders(model);
-        return model->lastError().type() == QSqlError::NoError;
     }
 
-    return false;
+    auto lastError = model->lastError();
+
+    if (lastError.type() == QSqlError::NoError)
+    {
+        emit sig_DataReady(model);
+    }
+    else
+    {
+        emit sig_QueryError(lastError.text());
+    }
 }

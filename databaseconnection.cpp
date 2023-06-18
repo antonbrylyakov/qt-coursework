@@ -85,7 +85,6 @@ void DatabaseConnection::doOpen(bool untilSuccess)
 
 void DatabaseConnection::configure()
 {
-    close();
     m_reconnectTimer->setInterval(m_configuration.reconnectIntervalSeconds * 1000);
     m_database.setHostName(m_configuration.host);
     m_database.setPort(m_configuration.port);
