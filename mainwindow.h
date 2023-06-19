@@ -23,6 +23,8 @@ public:
 private slots:
     void on_a_exit_triggered();
 
+    void on_pb_showFlights_clicked();
+
 protected:
     void showEvent(QShowEvent *event) override;
     void closeEvent (QCloseEvent *event) override;
@@ -46,6 +48,8 @@ private:
     void enableFilter();
     void loadAirports();
     void displayAirports();
+    void loadFlights();
+    void adjustFlightView();
 
     inline static QString STATUS_CONNECTED = "Подключено";
     inline static QString STATUS_DISCONNECTED = "Отключено";

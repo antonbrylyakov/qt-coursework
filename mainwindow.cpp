@@ -24,6 +24,7 @@ MainWindow::MainWindow(QWidget *parent)
     m_airportsModel = new QSqlQueryModel(this);
     m_flightDataAccessor = new FlightDataAccessor(m_connection, this);
     m_flightsModel = new QSqlQueryModel(this);
+    ui->tv_flights->setModel(m_flightsModel);
 
     displayStatus(STATUS_DISCONNECTED);
     connect(m_connection, &DatabaseConnection::sig_ChangeConnectionStatus, [this](auto status)
@@ -47,6 +48,10 @@ MainWindow::MainWindow(QWidget *parent)
     connect(m_airportAccessor, &AirportDataAccessor::sig_DataReady, this, &MainWindow::displayAirports);
 
     connect(m_airportAccessor, &AirportDataAccessor::sig_QueryError, this, &MainWindow::displayError);
+
+    connect(m_flightDataAccessor, &FlightDataAccessor::sig_QueryError, this, &MainWindow::displayError);
+
+    connect(m_flightDataAccessor, &FlightDataAccessor::sig_DataReady, this, &MainWindow::adjustFlightView);
 }
 
 MainWindow::~MainWindow()
@@ -133,11 +138,30 @@ void MainWindow::displayAirports()
         auto record = m_airportsModel->record(i);
         auto name = record.value(0).toString();
         auto code = record.value(1);
-        auto text = QString("%1 (%2)").arg(name).arg(code.toString());
+        auto text = QString("%1 (%2)").arg(name, code.toString());
         cb->addItem(text, code);
     }
 
     m_airportsModel->clear();
     enableFilter();
+}
+
+void MainWindow::loadFlights()
+{
+    m_flightDataAccessor->setAirportCode(ui->cbx_airport->currentData().toString());
+    m_flightDataAccessor->setDate(ui->de_flightDate->date());
+    m_flightDataAccessor->setFlightDirection(ui->rb_arrival->isChecked() ? FlightDirection::Arrival : FlightDirection::Departure);
+    m_flightDataAccessor->getData(m_flightsModel);
+}
+
+void MainWindow::adjustFlightView()
+{
+    ui->tv_flights->resizeColumnsToContents();
+}
+
+
+void MainWindow::on_pb_showFlights_clicked()
+{
+    loadFlights();
 }
 

@@ -13,6 +13,7 @@ void DataAccessorBase::getData(QSqlQueryModel* model)
     auto query = m_connection->createQuery();
     buildSql(query);
     query.exec();
+    qDebug() << query.executedQuery();
     if (m_connection->executeQuery(std::move(query), model))
     {
         initHeaders(model);
