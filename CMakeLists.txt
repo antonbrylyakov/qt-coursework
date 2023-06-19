@@ -27,6 +27,14 @@ set(PROJECT_SOURCES
         airportdataaccessor.cpp
         flightdataaccessor.h
         flightdataaccessor.cpp
+        airportstatisticitem.h
+        statisticdialog.h
+        statisticdialog.cpp
+        statisticdialog.ui
+        yearstatisticsdataaccessor.h
+        yearstatisticsdataaccessor.cpp
+        daystatisticsdataaccessor.h
+        daystatisticsdataaccessor.cpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
