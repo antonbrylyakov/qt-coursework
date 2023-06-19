@@ -52,6 +52,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(m_flightDataAccessor, &FlightDataAccessor::sig_QueryError, this, &MainWindow::displayError);
 
     connect(m_flightDataAccessor, &FlightDataAccessor::sig_DataReady, this, &MainWindow::adjustFlightView);
+
+    m_statDialog = new StatisticDialog(m_connection, this);
 }
 
 MainWindow::~MainWindow()
@@ -163,5 +165,11 @@ void MainWindow::adjustFlightView()
 void MainWindow::on_pb_showFlights_clicked()
 {
     loadFlights();
+}
+
+
+void MainWindow::on_pb_load_clicked()
+{
+    m_statDialog->showStatistics(ui->cbx_airport->currentData().toString(),  ui->cbx_airport->currentText());
 }
 

@@ -7,6 +7,7 @@
 #include "airportdataaccessor.h"
 #include "databaseconnection.h"
 #include "flightdataaccessor.h"
+#include "statisticdialog.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -25,6 +26,8 @@ private slots:
 
     void on_pb_showFlights_clicked();
 
+    void on_pb_load_clicked();
+
 protected:
     void showEvent(QShowEvent *event) override;
     void closeEvent (QCloseEvent *event) override;
@@ -38,6 +41,7 @@ private:
     FlightDataAccessor* m_flightDataAccessor;
     QSqlQueryModel* m_flightsModel;
     QMessageBox* m_msg;
+    StatisticDialog* m_statDialog;
     bool m_airportsLoaded = false;
     void initInterface();
     void displayStatus(QString str);
