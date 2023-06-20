@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Инспектор аэропортов</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
@@ -24,6 +24,9 @@
      <property name="text">
       <string>Статистика по аэропорту ...</string>
      </property>
+     <property name="margin">
+      <number>3</number>
+     </property>
     </widget>
    </item>
    <item>
@@ -35,6 +38,7 @@
       <attribute name="title">
        <string>За год</string>
       </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_2"/>
      </widget>
      <widget class="QWidget" name="tb_month">
       <attribute name="title">

@@ -2,7 +2,9 @@
 #define STATISTICDIALOG_H
 
 #include <QDialog>
+#include <QChartView>
 #include <QSqlQueryModel>
+#include <QBarSeries>
 #include "databaseconnection.h"
 #include "yearstatisticsdataaccessor.h"
 #include "daystatisticsdataaccessor.h"
@@ -38,9 +40,13 @@ private:
     QString m_airportCode;
     bool m_yearStatisticsLoaded = false;
     bool m_dayStatisticsLoaded = false;
+    QChart* m_yearChart;
+    QChartView* m_yearChartView;
+    bool m_yearChartShown = false;
 
     void loadYearStatistics();
     void loadDayStatistics();
+    //QBarSeries* createYearSeries();
 };
 
 #endif // STATISTICDIALOG_H

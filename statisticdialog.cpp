@@ -1,5 +1,11 @@
 #include "statisticdialog.h"
 #include "ui_statisticdialog.h"
+#include <QBarSet>
+#include <QSqlRecord>
+#include <QDate>
+#include <QValueAxis>
+#include <QBarCategoryAxis>
+#include <QChart>
 
 StatisticDialog::StatisticDialog(DatabaseConnection *connection, QWidget *parent) :
     QDialog(parent),
@@ -29,15 +35,21 @@ StatisticDialog::StatisticDialog(DatabaseConnection *connection, QWidget *parent
         m_dayStatisticsLoaded = true;
         displayMonthStatistics();
     });
+
+    m_yearChart = new QChart();
+    m_yearChartView = new QChartView(m_yearChart, this);
+    ui->tb_year->layout()->addWidget(m_yearChartView);
 }
 
 StatisticDialog::~StatisticDialog()
 {
     delete ui;
+    delete m_yearChart;
 }
 
 void StatisticDialog::showStatistics(QString &&airportCode, QString &&airportName)
 {
+    m_yearChartShown = false;
     m_airportName = std::move(airportName);
     m_airportCode = std::move(airportCode);
     ui->lb_header->setText(QString("Загруженность по аэропорту %1").arg(m_airportName));
@@ -75,7 +87,55 @@ void StatisticDialog::on_tw_statistics_currentChanged(int index)
 
 void StatisticDialog::displayYearStatistics()
 {
+    if (m_yearChartShown)
+    {
+        return;
+    }
 
+    m_yearChart->removeAllSeries();
+    auto oldAxes = m_yearChart->axes();
+    for (auto axis: oldAxes)
+    {
+        m_yearChart->removeAxis(axis);
+    }
+
+    QBarSeries *series = new QBarSeries();
+    QBarSet *set = new QBarSet("Месяцы");
+    QStringList months;
+    int maxValue = 1;
+    for (auto i = 0; i < m_yearStatisticsModel->rowCount(); ++i)
+    {
+        auto record = m_yearStatisticsModel->record(i);
+        auto count = record.value(0).toInt();
+        if (count > maxValue)
+        {
+            maxValue = count;
+        }
+
+        auto month = record.value(1).toDate();
+        auto monthStr = QLocale::system().toString(month, "MMM");
+        set->append(count);
+        months.append(monthStr);
+    }
+
+    series->append(set);
+    m_yearChart->addSeries(series);
+
+    QBarCategoryAxis *axisX = new QBarCategoryAxis();
+    axisX->append(months);
+    m_yearChart->addAxis(axisX, Qt::AlignBottom);
+    series->attachAxis(axisX);
+
+    auto *axisY = new QValueAxis();
+    axisY->setRange(0, 1.2 * maxValue);
+    axisY->setLabelFormat("%d");
+    axisY->applyNiceNumbers();
+    m_yearChart->addAxis(axisY, Qt::AlignLeft);
+    series->attachAxis(axisY);
+
+    m_yearChart->legend()->setVisible(false);
+
+    m_yearChartShown = true;
 }
 
 void StatisticDialog::displayMonthStatistics()
