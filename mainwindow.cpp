@@ -81,6 +81,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 void MainWindow::initInterface()
 {
+    QLocale::setDefault(QLocale(QLocale::Russian, QLocale::Russia));
     // ФТ4
     disableFilter();
     ui->rb_departure->setChecked(true);

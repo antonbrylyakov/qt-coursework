@@ -6,11 +6,15 @@
 #include <QValueAxis>
 #include <QBarCategoryAxis>
 #include <QChart>
+#include <QLineSeries>
+#include <QMap>
 
 StatisticDialog::StatisticDialog(DatabaseConnection *connection, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::StatisticDialog)
 {
+    m_locale = QLocale(QLocale::Russian, QLocale::Russia);
+
     ui->setupUi(this);
 
     m_connection = connection;
@@ -37,19 +41,30 @@ StatisticDialog::StatisticDialog(DatabaseConnection *connection, QWidget *parent
     });
 
     m_yearChart = new QChart();
-    m_yearChartView = new QChartView(m_yearChart, this);
-    ui->tb_year->layout()->addWidget(m_yearChartView);
+    ui->cv_yearChartView->setChart(m_yearChart);
+
+    m_monthChart = new QChart();
+    ui->cv_monthChartView->setChart(m_monthChart);
+
+    for (auto i = 1; i <= 12; ++i)
+    {
+        auto monthName = m_locale.standaloneMonthName(i);
+        ui->cb_month->addItem(monthName, i);
+    }
 }
 
 StatisticDialog::~StatisticDialog()
 {
     delete ui;
     delete m_yearChart;
+    delete m_monthChart;
 }
 
 void StatisticDialog::showStatistics(QString &&airportCode, QString &&airportName)
 {
     m_yearChartShown = false;
+    m_monthChartShown = false;
+    ui->cb_month->setCurrentIndex(0);
     m_airportName = std::move(airportName);
     m_airportCode = std::move(airportCode);
     ui->lb_header->setText(QString("Загруженность по аэропорту %1").arg(m_airportName));
@@ -87,7 +102,7 @@ void StatisticDialog::on_tw_statistics_currentChanged(int index)
 
 void StatisticDialog::displayYearStatistics()
 {
-    if (m_yearChartShown)
+    if (m_yearChartShown || !m_yearStatisticsLoaded)
     {
         return;
     }
@@ -99,7 +114,7 @@ void StatisticDialog::displayYearStatistics()
         m_yearChart->removeAxis(axis);
     }
 
-    QBarSeries *series = new QBarSeries();
+    QBarSeries *series = new QBarSeries(m_yearChart);
     QBarSet *set = new QBarSet("Месяцы");
     QStringList months;
     int maxValue = 1;
@@ -113,7 +128,7 @@ void StatisticDialog::displayYearStatistics()
         }
 
         auto month = record.value(1).toDate();
-        auto monthStr = QLocale::system().toString(month, "MMM");
+        auto monthStr = m_locale.toString(month, "MMM");
         set->append(count);
         months.append(monthStr);
     }
@@ -140,7 +155,80 @@ void StatisticDialog::displayYearStatistics()
 
 void StatisticDialog::displayMonthStatistics()
 {
+    if (m_monthChartShown || !m_dayStatisticsLoaded)
+    {
+        return;
+    }
 
+    auto monthNumber = ui->cb_month->currentData().toInt();
+
+    m_monthChart->removeAllSeries();
+    auto oldAxes = m_monthChart->axes();
+    for (auto axis: oldAxes)
+    {
+        m_monthChart->removeAxis(axis);
+    }
+
+    QMap<int, int> dayMap;
+    
+    static const int defaultDaysInMonth[] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+    auto daysInMonth = defaultDaysInMonth[monthNumber - 1];
+    for (auto i = 0; i < m_dayStatisticsModel->rowCount(); ++i)
+    {
+        auto record = m_dayStatisticsModel->record(i);
+        auto count = record.value(0).toInt();
+        auto date = record.value(1).toDate();
+        if (date.month() == monthNumber)
+        {
+            auto day = date.day();
+            if (!dayMap.contains(day))
+            {
+                dayMap[day] = count;
+            }
+            else
+            {
+                dayMap[day] += count;
+            }
+
+            if (date.daysInMonth() > daysInMonth)
+            {
+                daysInMonth = date.daysInMonth();
+            }
+        }
+    }
+
+    auto maxValue = 1;
+    QLineSeries* series = new QLineSeries(m_monthChart);
+    for (auto day = 1; day <= daysInMonth; ++day)
+    {
+        auto it = dayMap.find(day);
+        auto count = it != dayMap.end() ? it.value() : 0;
+        series->append(day, count);
+
+        if (count > maxValue)
+        {
+            maxValue = count;
+       }
+    }
+
+    m_monthChart->addSeries(series);
+
+    auto axisX = new QValueAxis();
+    axisX->setRange(1, daysInMonth);
+    axisX->setLabelFormat("%d");
+    m_monthChart->addAxis(axisX, Qt::AlignBottom);
+    series->attachAxis(axisX);
+
+    auto *axisY = new QValueAxis();
+    axisY->setRange(0, 1.2 * maxValue);
+    axisY->setLabelFormat("%d");
+    axisY->applyNiceNumbers();
+    m_monthChart->addAxis(axisY, Qt::AlignLeft);
+    series->attachAxis(axisY);
+
+    m_monthChart->legend()->setVisible(false);
+
+    m_monthChartShown = true;
 }
 
 void StatisticDialog::loadYearStatistics()
@@ -159,5 +247,12 @@ void StatisticDialog::loadDayStatistics()
 void StatisticDialog::on_pb_close_clicked()
 {
     close();
+}
+
+
+void StatisticDialog::on_cb_month_currentIndexChanged(int index)
+{
+    m_monthChartShown = false;
+    displayMonthStatistics();
 }
 

@@ -5,6 +5,7 @@
 #include <QChartView>
 #include <QSqlQueryModel>
 #include <QBarSeries>
+#include <QLocale>
 #include "databaseconnection.h"
 #include "yearstatisticsdataaccessor.h"
 #include "daystatisticsdataaccessor.h"
@@ -29,6 +30,8 @@ private slots:
 
     void on_pb_close_clicked();
 
+    void on_cb_month_currentIndexChanged(int index);
+
 private:
     Ui::StatisticDialog *ui;
     DatabaseConnection* m_connection;
@@ -41,8 +44,11 @@ private:
     bool m_yearStatisticsLoaded = false;
     bool m_dayStatisticsLoaded = false;
     QChart* m_yearChart;
-    QChartView* m_yearChartView;
     bool m_yearChartShown = false;
+    QChart* m_monthChart;
+    bool m_monthChartShown;
+    QLocale m_locale;
+
 
     void loadYearStatistics();
     void loadDayStatistics();
