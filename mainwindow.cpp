@@ -7,6 +7,8 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
+    m_locale = QLocale(QLocale::Russian, QLocale::Russia);
+
     ui->setupUi(this);
 
     initInterface();
@@ -81,7 +83,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 void MainWindow::initInterface()
 {
-    QLocale::setDefault(QLocale(QLocale::Russian, QLocale::Russia));
+    this->setLocale(m_locale);
     // ФТ4
     disableFilter();
     ui->rb_departure->setChecked(true);

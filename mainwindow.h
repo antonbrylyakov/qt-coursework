@@ -43,6 +43,7 @@ private:
     QMessageBox* m_msg;
     StatisticDialog* m_statDialog;
     bool m_airportsLoaded = false;
+    QLocale m_locale;
     void initInterface();
     void displayStatus(QString str);
     void connectToDatabase();
