@@ -43,7 +43,6 @@ private:
     QMessageBox* m_msg;
     StatisticDialog* m_statDialog;
     bool m_airportsLoaded = false;
-    QLocale m_locale;
     void initInterface();
     void displayStatus(QString str);
     void connectToDatabase();
@@ -58,6 +57,7 @@ private:
 
     inline static QString STATUS_CONNECTED = "Подключено";
     inline static QString STATUS_DISCONNECTED = "Отключено";
+    inline static QString NO_RESULTS = "Рейсов не найдено";
     inline static QDate MIN_DATE = QDate(2016, 8, 15);
     inline static QDate MAX_DATE = QDate(2017, 9, 14);
 };

@@ -47,11 +47,11 @@ private:
     bool m_yearChartShown = false;
     QChart* m_monthChart;
     bool m_monthChartShown;
-    QLocale m_locale;
-
+    bool m_monthsFilled = false;
 
     void loadYearStatistics();
     void loadDayStatistics();
+    void fillMonths();
     //QBarSeries* createYearSeries();
 };
 

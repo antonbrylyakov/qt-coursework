@@ -7,7 +7,7 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
-    m_locale = QLocale(QLocale::Russian, QLocale::Russia);
+    setLocale(QLocale(QLocale::Russian, QLocale::Russia));
 
     ui->setupUi(this);
 
@@ -56,6 +56,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(m_flightDataAccessor, &FlightDataAccessor::sig_DataReady, this, &MainWindow::adjustFlightView);
 
     m_statDialog = new StatisticDialog(m_connection, this);
+    m_statDialog->setLocale(locale());
 }
 
 MainWindow::~MainWindow()
@@ -83,7 +84,8 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 void MainWindow::initInterface()
 {
-    this->setLocale(m_locale);
+    ui->lb_help->setVisible(true);
+    ui->tv_flights->setVisible(false);
     // ФТ4
     disableFilter();
     ui->rb_departure->setChecked(true);
@@ -110,6 +112,7 @@ void MainWindow::disconnectFromDatabase()
 
 void MainWindow::displayError(QString msg)
 {
+    disableFilter();
     m_msg->setIcon(QMessageBox::Critical);
     m_msg->setText(msg);
     m_msg->exec();
@@ -153,6 +156,7 @@ void MainWindow::displayAirports()
 
 void MainWindow::loadFlights()
 {
+    disableFilter();
     m_flightDataAccessor->setAirportCode(ui->cbx_airport->currentData().toString());
     m_flightDataAccessor->setDate(ui->de_flightDate->date());
     m_flightDataAccessor->setFlightDirection(ui->rb_arrival->isChecked() ? FlightDirection::Arrival : FlightDirection::Departure);
@@ -161,7 +165,19 @@ void MainWindow::loadFlights()
 
 void MainWindow::adjustFlightView()
 {
-    ui->tv_flights->resizeColumnsToContents();
+    enableFilter();
+    if (m_flightsModel->rowCount() > 0)
+    {
+        ui->lb_help->setVisible(false);
+        ui->tv_flights->setVisible(true);
+        ui->tv_flights->resizeColumnsToContents();
+    }
+    else
+    {
+        ui->lb_help->setText(NO_RESULTS);
+        ui->lb_help->setVisible(true);
+        ui->tv_flights->setVisible(false);
+    }
 }
 
 

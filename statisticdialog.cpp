@@ -13,8 +13,6 @@ StatisticDialog::StatisticDialog(DatabaseConnection *connection, QWidget *parent
     QDialog(parent),
     ui(new Ui::StatisticDialog)
 {
-    m_locale = QLocale(QLocale::Russian, QLocale::Russia);
-
     ui->setupUi(this);
 
     m_connection = connection;
@@ -45,12 +43,6 @@ StatisticDialog::StatisticDialog(DatabaseConnection *connection, QWidget *parent
 
     m_monthChart = new QChart();
     ui->cv_monthChartView->setChart(m_monthChart);
-
-    for (auto i = 1; i <= 12; ++i)
-    {
-        auto monthName = m_locale.standaloneMonthName(i);
-        ui->cb_month->addItem(monthName, i);
-    }
 }
 
 StatisticDialog::~StatisticDialog()
@@ -128,7 +120,7 @@ void StatisticDialog::displayYearStatistics()
         }
 
         auto month = record.value(1).toDate();
-        auto monthStr = m_locale.toString(month, "MMM");
+        auto monthStr = locale().toString(month, "MMM");
         set->append(count);
         months.append(monthStr);
     }
@@ -159,6 +151,8 @@ void StatisticDialog::displayMonthStatistics()
     {
         return;
     }
+
+    fillMonths();
 
     auto monthNumber = ui->cb_month->currentData().toInt();
 
@@ -241,6 +235,22 @@ void StatisticDialog::loadDayStatistics()
 {
     m_dayStatisticsDataAccessor->setAirportCode(m_airportCode);
     m_dayStatisticsDataAccessor->getData(m_dayStatisticsModel);
+}
+
+void StatisticDialog::fillMonths()
+{
+    if (m_monthsFilled)
+    {
+        return;
+    }
+
+    for (auto i = 1; i <= 12; ++i)
+    {
+        auto monthName = locale().standaloneMonthName(i);
+        ui->cb_month->addItem(monthName, i);
+    }
+
+    m_monthsFilled = true;
 }
 
 
