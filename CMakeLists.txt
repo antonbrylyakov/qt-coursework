@@ -67,10 +67,22 @@ else()
     endif()
 endif()
 
+#IF (WIN32)
+#target_link_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/PG_Libs)
+#target_link_libraries(qt-coursework PRIVATE
+#    libcrypto-3-x64
+#    libiconv-2
+#    libintl-9
+#    libpq
+#    libssl-3-x64
+#)
+#ENDIF()
+
 target_link_libraries(qt-coursework PRIVATE
     Qt${QT_VERSION_MAJOR}::Widgets
     Qt${QT_VERSION_MAJOR}::Sql
-    Qt${QT_VERSION_MAJOR}::Charts)
+    Qt${QT_VERSION_MAJOR}::Charts
+)
 
 set_target_properties(qt-coursework PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
