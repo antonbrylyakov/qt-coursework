@@ -136,6 +136,7 @@ void StatisticDialog::displayYearStatistics()
     series->attachAxis(axisX);
 
     auto *axisY = new QValueAxis();
+    axisY->setTitleText("Рейсы");
     axisY->setRange(0, 1.2 * maxValue);
     axisY->setLabelFormat("%d");
     axisY->applyNiceNumbers();
@@ -210,12 +211,14 @@ void StatisticDialog::displayMonthStatistics()
     m_monthChart->addSeries(series);
 
     auto axisX = new QValueAxis();
+    axisX->setTitleText("Число");
     axisX->setRange(1, daysInMonth);
     axisX->setLabelFormat("%d");
     m_monthChart->addAxis(axisX, Qt::AlignBottom);
     series->attachAxis(axisX);
 
     auto *axisY = new QValueAxis();
+    axisY->setTitleText("Рейсы");
     axisY->setRange(0, 1.2 * maxValue);
     axisY->setLabelFormat("%d");
     axisY->applyNiceNumbers();
