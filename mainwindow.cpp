@@ -73,6 +73,7 @@ void MainWindow::on_a_exit_triggered()
 
 void MainWindow::showEvent(QShowEvent *event)
 {
+    // ФТ1
     QMainWindow::showEvent(event);
     connectToDatabase();
 }
@@ -112,6 +113,7 @@ void MainWindow::disconnectFromDatabase()
 
 void MainWindow::displayError(QString msg)
 {
+    // ФТ5
     disableFilter();
     m_msg->setIcon(QMessageBox::Critical);
     m_msg->setText(msg);
@@ -133,11 +135,13 @@ void MainWindow::enableFilter()
 
 void MainWindow::loadAirports()
 {
+    // ФТ8
     m_airportAccessor->getData(m_airportsModel);
 }
 
 void MainWindow::displayAirports()
 {
+    // ФТ9
     m_airportsLoaded = true;
     auto cb = ui->cbx_airport;
     cb->clear();

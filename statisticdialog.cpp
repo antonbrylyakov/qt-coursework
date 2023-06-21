@@ -83,6 +83,8 @@ void StatisticDialog::on_tw_statistics_currentChanged(int index)
     {
         if (m_dayStatisticsLoaded)
         {
+            //ФТ21
+            ui->cb_month->setCurrentIndex(0);
             displayMonthStatistics();
         }
         else

@@ -74,5 +74,5 @@ void FlightDataAccessor::initHeaders(QSqlQueryModel *model) const
 {
     model->setHeaderData(0, Qt::Horizontal, tr("Номер рейса"));
     model->setHeaderData(1, Qt::Horizontal, tr(m_direction == FlightDirection::Arrival ? "Время прилета" : "Время вылета"));
-    model->setHeaderData(2, Qt::Horizontal, tr(m_direction == FlightDirection::Arrival ? "Аэропорт назначения" : "Аэропорт отправления"));
+    model->setHeaderData(2, Qt::Horizontal, tr(m_direction == FlightDirection::Arrival ? "Аэропорт отправления" : "Аэропорт назначения"));
 }
