@@ -88,7 +88,7 @@ void MainWindow::initInterface()
     ui->lb_help->setVisible(true);
     ui->tv_flights->setVisible(false);
     // ФТ4
-    disableFilter();
+    setFilterEnabled(false);
     ui->rb_departure->setChecked(true);
     // О2
     ui->de_flightDate->setMinimumDate(MIN_DATE);
@@ -114,7 +114,7 @@ void MainWindow::disconnectFromDatabase()
 void MainWindow::displayError(QString msg)
 {
     // ФТ5
-    disableFilter();
+    setFilterEnabled(false);
     m_msg->setIcon(QMessageBox::Critical);
     m_msg->setText(msg);
     m_msg->exec();
@@ -123,14 +123,9 @@ void MainWindow::displayError(QString msg)
     m_connection->open(true);
 }
 
-void MainWindow::disableFilter()
+void MainWindow::setFilterEnabled(bool enabled)
 {
-    ui->gb_filter->setEnabled(false);
-}
-
-void MainWindow::enableFilter()
-{
-    ui->gb_filter->setEnabled(true);
+    ui->gb_filter->setEnabled(enabled);
 }
 
 void MainWindow::loadAirports()
@@ -155,12 +150,12 @@ void MainWindow::displayAirports()
     }
 
     m_airportsModel->clear();
-    enableFilter();
+    setFilterEnabled(true);
 }
 
 void MainWindow::loadFlights()
 {
-    disableFilter();
+    setFilterEnabled(false);
     m_flightDataAccessor->setAirportCode(ui->cbx_airport->currentData().toString());
     m_flightDataAccessor->setDate(ui->de_flightDate->date());
     m_flightDataAccessor->setFlightDirection(ui->rb_arrival->isChecked() ? FlightDirection::Arrival : FlightDirection::Departure);
@@ -169,12 +164,12 @@ void MainWindow::loadFlights()
 
 void MainWindow::adjustFlightView()
 {
-    enableFilter();
+    setFilterEnabled(true);
     if (m_flightsModel->rowCount() > 0)
     {
         ui->lb_help->setVisible(false);
         ui->tv_flights->setVisible(true);
-        ui->tv_flights->resizeColumnsToContents();
+        ui->tv_flights->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     }
     else
     {

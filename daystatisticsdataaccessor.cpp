@@ -23,9 +23,7 @@ void DayStatisticsDataAccessor::setAirportCode(QString &&airportCode)
 
 void DayStatisticsDataAccessor::buildSql(QSqlQuery &query) const
 {
-    query.prepare("SELECT count(flight_no), date_trunc('day', scheduled_departure) as \"Day\" from bookings.flights f "
-                  "WHERE(scheduled_departure::date > date('2016-08-31') and scheduled_departure::date <= date('2017-08-31')) and ( departure_airport = :airportCode or arrival_airport = :airportCode) "
-                  "GROUP BY \"Day\"");
+    query.prepare(QUERY_TEXT);
 
     query.bindValue(":airportCode", m_airPortCode);
 }

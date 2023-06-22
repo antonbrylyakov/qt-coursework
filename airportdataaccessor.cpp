@@ -8,7 +8,7 @@ AirportDataAccessor::AirportDataAccessor(DatabaseConnection *connection, QObject
 
 void AirportDataAccessor::buildSql(QSqlQuery& query) const
 {
-    query.prepare("SELECT airport_name->>'ru' as \"airportName\", airport_code FROM bookings.airports_data ORDER BY airport_name->>'ru'");
+    query.prepare(QUERY_TEXT);
 }
 
 void AirportDataAccessor::initHeaders(QSqlQueryModel *model) const

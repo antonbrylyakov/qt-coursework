@@ -51,19 +51,11 @@ void FlightDataAccessor::buildSql(QSqlQuery& query) const
 {
     if (m_direction == FlightDirection::Arrival)
     {
-        query.prepare("SELECT flight_no, scheduled_arrival, ad.airport_name->>'ru' as airportName from bookings.flights f "
-                      "JOIN bookings.airports_data ad ON ad.airport_code = f.departure_airport "
-                      "WHERE f.arrival_airport = :airportCode "
-                      "AND f.scheduled_arrival >= :date AND f.scheduled_arrival < (:date::timestamptz + interval '1 day') "
-                      "ORDER BY scheduled_arrival");
+        query.prepare(QUERY_TEXT_ARRIVAL);
     }
     else
     {
-        query.prepare("SELECT flight_no, scheduled_departure, ad.airport_name->>'ru' as airportName from bookings.flights f "
-                      "JOIN bookings.airports_data ad ON ad.airport_code = f.arrival_airport "
-                      "where f.departure_airport = :airportCode "
-                      "AND f.scheduled_departure >= :date AND f.scheduled_departure < (:date::timestamptz + interval '1 day') "
-                      "ORDER BY scheduled_departure");
+        query.prepare(QUERY_TEXT_DEPARTURE);
     }
 
     query.bindValue(":airportCode", m_airPortCode);

@@ -6,6 +6,9 @@
 #include <QSqlQueryModel>
 #include <QBarSeries>
 #include <QLocale>
+#include <QBarCategoryAxis>
+#include <QValueAxis>
+#include <QLineSeries>
 #include "databaseconnection.h"
 #include "yearstatisticsdataaccessor.h"
 #include "daystatisticsdataaccessor.h"
@@ -21,7 +24,7 @@ class StatisticDialog : public QDialog
 public:
     StatisticDialog(DatabaseConnection* connection, QWidget *parent = nullptr);
     ~StatisticDialog();
-    void showStatistics(QString&& airportCode, QString&& airportName);
+    void showStatistics(const QString& airportCode, const QString& airportName);
 
 private slots:
     void on_tw_statistics_currentChanged(int index);
@@ -30,7 +33,7 @@ private slots:
 
     void on_pb_close_clicked();
 
-    void on_cb_month_currentIndexChanged(int index);
+    void monthChanged(int index);
 
 private:
     Ui::StatisticDialog *ui;
@@ -48,11 +51,15 @@ private:
     QChart* m_monthChart;
     bool m_monthChartShown;
     bool m_monthsFilled = false;
+    QBarCategoryAxis* m_yearAxisX = nullptr;
+    QValueAxis* m_yearAxisY = nullptr;
+    QValueAxis* m_monthAxisX = nullptr;
+    QValueAxis* m_monthAxisY = nullptr;
 
     void loadYearStatistics();
     void loadDayStatistics();
     void fillMonths();
-    //QBarSeries* createYearSeries();
+
 };
 
 #endif // STATISTICDIALOG_H

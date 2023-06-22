@@ -48,8 +48,7 @@ private:
     void connectToDatabase();
     void disconnectFromDatabase();
     void displayError(QString msg);
-    void disableFilter();
-    void enableFilter();
+    void setFilterEnabled(bool enabled);
     void loadAirports();
     void displayAirports();
     void loadFlights();
